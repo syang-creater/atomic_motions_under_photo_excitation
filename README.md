@@ -1,3 +1,3 @@
-<br> # atomic_motions_under_photo_exciation
+# atomic_motions_under_photo_exciation
 <br> Calculate bragg and diffuse intensity and normal coordinate from AIMD (VASP)
 <br> Keep updating right now ....please wait for the full descriptions...
