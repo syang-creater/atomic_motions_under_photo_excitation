@@ -48,6 +48,9 @@ class SystemStructure:
                 self._sposcar_fract = np.asarray(self._sposcar, dtype= float)
         except FileNotFoundError as e:
             print('SPOSCAR file does not exist: {}'.format(e))
+        except IOE as e:
+            print('IO error'.format(e))
+            raise e
         return self._sposcar_fract;
 
     def read_xdatcar(self,path):
@@ -74,8 +77,13 @@ class SystemStructure:
                         self._count +=1
                 self._xdatcar_fract = np.asarray(self._xdatcar,dtype = float)
                 self._steps = int(self._count/self._total_number)
-        except FileNotFoundError:
-            print('XDARCAR file does not exist !')
+        except FileNotFoundError as e:
+            print('XDARCAR file does not exist:{}'.format(e))
+            raise e
+        except IOE as e:
+            print('IO error'.format(e))
+            raise e
+        return self._xdatcar_fract;
 
     def _isfloat(self,*value):
         for it in value:

@@ -1,3 +1,0 @@
-# git
-Calculate bragg and diffuse intensity and normal coordinate from AIMD (VASP)
-Keep updating right now ....please wait...

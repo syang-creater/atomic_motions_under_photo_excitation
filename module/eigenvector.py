@@ -64,7 +64,7 @@ class Eigenvector(SystemStructure):
 
     def conj_eigenvector_supercell_phase_mass(self):
         """
-            calculate all the parts conj(e)*np.sqrt(mass)
+            calculate all the parts conj(e)*np.sqrt(mass) except the displacement 
         """
         self._conj_eigenvector_supercell_phase_mass=np.empty([self._eigenvector_supercell.shape[0],3],dtype=complex)
         count_start = 0;
