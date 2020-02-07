@@ -4,10 +4,11 @@ import sys;
 import matplotlib.pyplot as plt;
 import pdb;
 
+
 def main():
     """
-        Calcuate normal coordinate for wave vector q and eigenvector at q for branch v
-        the atomic order follow the TDEP for SPOSCAR and XDATCAR
+    Calcuate normal coordinate for wave vector q and eigenvector at q for branch v
+    the atomic order follow the TDEP for SPOSCAR and XDATCAR
     """
     nc=normalcoordinate.NormalCoordinate();
     nc.read_poscar('./test_example/POSCAR')
@@ -22,11 +23,11 @@ def main():
 
     supercell_size=np.array([2,4,4])
     atomic_mass= np.array([78.96,118.71])
-    wave_vector=np.array([0,0,0])
+    wave_vector=np.array([0.5,0,0])
 
     # load eigenvector
     # 0.3688768784THz TA at [0.25,0,0]
-    nc.read_eigenvector('./test_example/eigenvector_TO_000')
+    nc.read_eigenvector('./test_example/eigenvector_TA_0500')
     # load sposcar
     nc.read_sposcar('./test_example/infile.ssposcar');
 
@@ -34,30 +35,31 @@ def main():
     nc.eigenvector_supercell_phase(wave_vector)
     nc.atomic_mass(atomic_mass[0],atomic_mass[1])
     nc.conj_eigenvector_supercell_phase_mass()
+
+    pdb.set_trace();
     nc.normalcoordinate()
-    nc.normalcoordinate_auto_correlate()
     time_start =0;
     time_end = 12022;
-
-    #pdb.set_trace(); clear, step
     nc.plot_normalcoordinate(time_start, time_end)
-    nc.plot_normalcoordinate_auto_correlate(time_start, time_end)
 
     timestep_size = 0.001
-    #before photo_exciation
     nc.normalcoordinate_FFT(timestep_size, time_start, 4253)
+    nc.plot_normalcoordinate_FFT(np.array([0,5]))
+    nc.normalcoordinate_FFT(timestep_size, 4253, time_end)
+    nc.plot_normalcoordinate_FFT(np.array([0,5]))
+
+    #before photo_exciation
+    nc.normalcoordinate_auto_correlate(time_start, 4253)
+    nc.plot_normalcoordinate_auto_correlate(time_start,4253)
     nc.normalcoordinate_auto_correlate_FFT(timestep_size, time_start, 4253)
-    # xlim in THz
-    nc.plot_normalcoordinate_FFT(np.array([0,5]));
-    nc.plot_normalcoordinate_auto_correlate_FFT(np.array([0,5]));
+    nc.plot_normalcoordinate_auto_correlate_FFT(np.array([0,5]),np.array([0,800]))
+
 
     #after photo_excitation
-    nc.normalcoordinate_FFT(timestep_size, 4253, time_end)
+    nc.normalcoordinate_auto_correlate(4253, time_end)
+    nc.plot_normalcoordinate_auto_correlate(4253,time_end)
     nc.normalcoordinate_auto_correlate_FFT(timestep_size, 4253, time_end)
-
-    # xlim in THz
-    nc.plot_normalcoordinate_FFT(np.array([0,5]));
-    nc.plot_normalcoordinate_auto_correlate_FFT(np.array([0,5]));
+    nc.plot_normalcoordinate_auto_correlate_FFT(np.array([0,5]),np.array([0,800]))
 
 
 if __name__ == '__main__':

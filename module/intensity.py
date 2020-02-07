@@ -1,5 +1,6 @@
 import sys;
 from systemstructure import SystemStructure;
+import matplotlib.pyplot as plt;
 import numpy as np;
 
 class Intensity(SystemStructure):
@@ -28,3 +29,60 @@ class Intensity(SystemStructure):
         self._freq = np.fft.fftfreq(time_end-time_start,self._fs)
         self._fft  = np.abs(np.fft.fft(self._intensity[time_start:time_end]))
         return self._freq, self._fft
+
+    def intensity_auto_correlation(self, wave_vector,supercell_size, atomic_form_factor, time_start, time_end):
+        """
+            t_0 is the time origin
+            t_d is the time delay
+            C_(t_d)=sum A(t_0)A(t_0+t_d) over from 0 to t_0 and take the average
+        """
+        self._intensity_auto_correlation = np.empty(time_end-time_start, dtype = complex)
+        temp_intensity= self._structure_factor[time_start:time_end]
+        for t in range(time_end-time_start):
+            self._intensity_auto_correlation[t]= np.dot(temp_intensity,np.roll(temp_intensity,t))/(time_end-time_start);
+        return self._intensity_auto_correlation.real
+
+    def intensity_auto_correlation_FFT(self,timestep_size,time_start, time_end):
+        """ calculate the FFT of intensity calculated from auto correlaion with timestep_size in unit of (ps), the unit of output frequency is (THz)"""
+        self._fs = timestep_size;
+        self._freq = np.fft.fftfreq(time_end-time_start,self._fs)
+        self._intensity_auto_correlation_fft  = np.abs(np.fft.fft(self._intensity_auto_correlation.real))
+        return self._freq, self._intensity_auto_correlation_fft
+
+    def plot_intensity(self,xlim):
+        plt.figure()
+        plt.plot(self._intensity)
+        plt.xlim(xlim[0],xlim[1])
+        plt.xlabel('Time (fs)')
+        plt.ylabel('Intensity')
+        plt.show()
+        return
+
+    def plot_intensity_auto_correlation(self,xlim):
+        plt.figure()
+        plt.plot(np.arange(xlim[0],xlim[1]),self._intensity_auto_correlation.real)
+        plt.xlim(xlim[0],xlim[1])
+        plt.xlabel('Time (fs)')
+        plt.ylabel('Intensity from auto correlation function')
+        plt.show()
+        return
+
+    def plot_intensity_FFT(self,xlim,ylim):
+        plt.figure()
+        plt.plot(self._freq,self._fft)
+        plt.xlim(xlim[0],xlim[1])
+        plt.ylim(ylim[0],ylim[1])
+        plt.xlabel('Frequency (THz)')
+        plt.ylabel('Amplitude')
+        plt.show()
+        return
+
+    def plot_intensity_auto_correlation_FFT(self,xlim,ylim):
+        plt.figure()
+        plt.plot(self._freq,self._intensity_auto_correlation_fft)
+        plt.xlim(xlim[0],xlim[1])
+        plt.ylim(ylim[0],ylim[1])
+        plt.xlabel('Frequency (THz)')
+        plt.ylabel('Amplitude')
+        plt.show()
+        return
